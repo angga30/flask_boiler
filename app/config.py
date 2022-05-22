@@ -8,7 +8,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/delman'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@103.55.37.69:5432/core'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
