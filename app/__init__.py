@@ -21,8 +21,6 @@ job_defaults = {
     'coalesce': False,
     'max_instances': 3
 }
-cron = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults)
-cron.start()
 
 db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
@@ -36,3 +34,6 @@ def create_app(config_name):
     return app
 
 app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
+
+cron = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults)
+cron.start()
