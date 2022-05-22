@@ -1,0 +1,9 @@
+flask-bcrypt
+flask==2.0.1
+Flask-Migrate
+Flask-Script
+flask_testing
+flask-expects-json
+dateparser
+apscheduler
+google-cloud-bigquery
