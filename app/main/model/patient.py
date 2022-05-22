@@ -1,4 +1,5 @@
 from app import db, flask_bcrypt
+from sqlalchemy.orm import relationship
 
 class Patient(db.Model):
     __tablename__ = "patient"
@@ -11,6 +12,8 @@ class Patient(db.Model):
     address = db.Column(db.String(255), nullable=False)
     vaccine_type = db.Column(db.String(255))
     vaccine_count = db.Column(db.Integer)
+
+    appointments = relationship("Appointment")
 
 
     def __repr__(self):

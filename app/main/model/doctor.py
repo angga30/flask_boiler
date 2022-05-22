@@ -14,5 +14,7 @@ class Doctor(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = relationship("User", back_populates="doctor")
 
+    appointments = relationship("Appointment")
+
     def __repr__(self):
         return "<Doctor '{}'>".format(self.full_name)
