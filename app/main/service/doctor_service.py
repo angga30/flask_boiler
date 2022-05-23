@@ -34,6 +34,9 @@ class DoctorService:
     def get_all(self, **kwargs):
         return Doctor.query.filter_by(**kwargs)
 
+    def get_filter_data(self, *args):
+        return Doctor.query.filter(*args)
+
     def get_by_id(self, id):
         employee = Doctor.query.filter_by(id=id).first()
         if not employee:

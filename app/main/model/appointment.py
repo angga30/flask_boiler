@@ -4,11 +4,6 @@ from sqlalchemy.orm import relationship
 import enum
 from sqlalchemy import Enum
 
-class _Status(enum.Enum):
-    in_queue = "IN_QUEUE"
-    done = "DONE"
-    CANCELLED = "CANCELLED"
-
 class Appointment(db.Model):
     __tablename__ = "appointement"
 
@@ -19,7 +14,7 @@ class Appointment(db.Model):
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
     patient = relationship("Patient", back_populates="appointments")
 
-    status = db.Column(Enum(_Status))
+    status = db.Column(db.String(50))
     diagnose = db.Column(db.Text)
     notes = db.Column(db.Text)
     appointment_time = db.Column(db.DateTime)

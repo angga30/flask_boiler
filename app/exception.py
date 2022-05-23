@@ -7,3 +7,6 @@ class CreateDataFailed(Exception):
 
 class DataExist(Exception):
     pass
+
+class ParseError(Exception):
+    pass

@@ -2,6 +2,7 @@ import json
 from flask import request, jsonify, Blueprint, abort
 from flask.views import MethodView
 from app import db, app
+from app.authentication import token_required
 from app.exception import DataNotFound, CreateDataFailed, DataExist
 from app.main.service.doctor_service import DoctorService
 from app.main.service.user_service import UserService
@@ -27,7 +28,9 @@ schema = {
 
 class DoctorView(MethodView):
     service = DoctorService()
-    def get(self, id=None):
+
+    @token_required
+    def get(self, current_user=None, id=None):
         if not id:
             doctors = self.service.get_all()
             res = []
@@ -56,8 +59,9 @@ class DoctorView(MethodView):
 
         return jsonify(res)
 
+    @token_required
     @expects_json(schema)
-    def post(self):
+    def post(self, current_user=None):
         data = request.json
         user_service = UserService()
         try:
@@ -79,7 +83,8 @@ class DoctorView(MethodView):
                     'work_end_time': doctor.work_end_time.isoformat(),
                 })
 
-    def put(self, id):
+    @token_required
+    def put(self, id, current_user=None):
         data = request.json
         try:
             doctor = self.service.get_by_id(id)
@@ -98,7 +103,8 @@ class DoctorView(MethodView):
                 "msg": f"Data with id: {id} not found !!"
             }
 
-    def delete(self, id):
+    @token_required
+    def delete(self, id, current_user=None):
         self.service.delete(id)
         return {
             "code": "success"

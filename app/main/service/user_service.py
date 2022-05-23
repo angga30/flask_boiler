@@ -21,8 +21,8 @@ class UserService:
         else:
             raise DataExist(f"User with username {data['username']} is exists")
 
-    def update(self, object, data):
-        pass
+    def get_filter_data(self, *args):
+        return User.query.filter(*args)
 
     def save_changes(self, data):
         db.session.add(data)

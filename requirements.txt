@@ -7,3 +7,4 @@ flask-expects-json
 dateparser
 apscheduler
 google-cloud-bigquery
+werkzeug==2.0.3

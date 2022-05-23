@@ -2,6 +2,7 @@ import json
 from flask import request, jsonify, Blueprint, abort
 from flask.views import MethodView
 from app import db, app
+from app.authentication import token_required
 from app.exception import DataNotFound, CreateDataFailed, DataExist
 from app.main.service.patient_service import PatientService
 
@@ -11,22 +12,22 @@ from flask_expects_json import expects_json
 schema = {
     "type": "object",
     "properties": {
-        "username": { "type": "string" },
-        "name": { "type": "string" },
-        "password": { "type": "string" },
         "gender": { "type": "string" },
+        "name": { "type": "string" },
         "birthdate": { "type": "string" },
-        "work_start_time": { "type": "string" },
-        "work_end_time": { "type": "string" },
+        "address": { "type": "string" },
+        "no_ktp": { "type": "string" },
       },
-    "required": ["username", "password", "birthdate", "work_start_time", "work_end_time"]
+    "required": ["gender", "name", "birthdate", "address", "no_ktp"]
 }
 
 
 
 class PatientView(MethodView):
     service = PatientService()
-    def get(self, id=None):
+
+    @token_required
+    def get(self, current_user=None, id=None):
         if not id:
             patients = self.service.get_all()
             res = []
@@ -40,10 +41,32 @@ class PatientView(MethodView):
                     'no_ktp': patient.no_ktp,
                     'vaccine_type': patient.vaccine_type,
                     'vaccine_count': patient.vaccine_count,
+                    'appointments': [
+                        {
+                            'id': appointment.id,
+                            'patient': {
+                                'id': appointment.patient.id,
+                                'name': appointment.patient.full_name,
+                                'gender': appointment.patient.gender,
+                                'birthdate': appointment.patient.bod,
+                                'address': appointment.patient.address,
+                                'no_ktp': appointment.patient.no_ktp,
+                                'vaccine_type': appointment.patient.vaccine_type,
+                                'vaccine_count': appointment.patient.vaccine_count,
+                            },
+                            'doctor': {
+                                'id': appointment.doctor.id,
+                                'name': appointment.doctor.full_name,
+                            },
+                            'status': appointment.status,
+                            'diagnose': appointment.diagnose,
+                            'notes': appointment.notes,
+                        }
+                        for appointment in patient.appointments]
                 })
         else:
             try:
-                doctor = self.service.get_by_id(id)
+                patient = self.service.get_by_id(id=id)
                 res = {
                     'id': patient.id,
                     'name': patient.full_name,
@@ -53,14 +76,37 @@ class PatientView(MethodView):
                     'no_ktp': patient.no_ktp,
                     'vaccine_type': patient.vaccine_type,
                     'vaccine_count': patient.vaccine_count,
+                    'appointments': [
+                        {
+                            'id': appointment.id,
+                            'patient': {
+                                'id': appointment.patient.id,
+                                'name': appointment.patient.full_name,
+                                'gender': appointment.patient.gender,
+                                'birthdate': appointment.patient.bod,
+                                'address': appointment.patient.address,
+                                'no_ktp': appointment.patient.no_ktp,
+                                'vaccine_type': appointment.patient.vaccine_type,
+                                'vaccine_count': appointment.patient.vaccine_count,
+                            },
+                            'doctor': {
+                                'id': appointment.doctor.id,
+                                'name': appointment.doctor.full_name,
+                            },
+                            'status': appointment.status,
+                            'diagnose': appointment.diagnose,
+                            'notes': appointment.notes,
+                        }
+                        for appointment in patient.appointments]
                 }
             except DataNotFound as e:
                 abort(404)
 
         return jsonify(res)
 
+    @token_required
     @expects_json(schema)
-    def post(self):
+    def post(self, current_user=None):
         data = request.json
         try:
             patient = self.service.save_new(data)
@@ -81,7 +127,8 @@ class PatientView(MethodView):
                     'vaccine_count': patient.vaccine_count,
                 })
 
-    def put(self, id):
+    @token_required
+    def put(self, id, current_user=None):
         data = request.json
         try:
             patient = self.service.get_by_id(id)
@@ -102,7 +149,8 @@ class PatientView(MethodView):
                 "msg": f"Data with id: {id} not found !!"
             }
 
-    def delete(self, id):
+    @token_required
+    def delete(self, id, current_user=None):
         self.service.delete(id)
         return {
             "code": "success"
