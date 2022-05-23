@@ -8,14 +8,14 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/delman'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@db:5432/delman'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class TestingConfig(Config):
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/delman'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@db:5432/delman'
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
