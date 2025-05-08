@@ -46,5 +46,9 @@ def token_required(f):
         kwargs["current_user"] = current_user
         return f(*args, **kwargs)
 
+
+
+    #asdasdasda
+
     return decorator
 
